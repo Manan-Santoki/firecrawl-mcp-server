@@ -2,6 +2,8 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: {
+    selfhost: 'src/selfhost-entry.ts',
+    'selfhost-tools': 'src/selfhost.ts',
     index: 'src/index.ts',
     server: 'src/server.ts',
     'www-authenticate': 'src/mcp/www-authenticate.ts',

@@ -5,3 +5,4 @@ dist
 .DS_Store
 npm-debug.log*
 pnpm-debug.log*
+selfhost-openapi-source.json
