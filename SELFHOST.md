@@ -29,7 +29,7 @@ need an OAuth adapter; this deployment authenticates with Firecrawl API keys.
 
 ## Tools
 
-Existing map, crawl/status, agent/status, parse, monitor, interaction, feedback,
+Existing map, crawl/status, agent/status, monitor, interaction, feedback,
 and credit tools retain upstream behavior. Scrape and search use native API
 requests to preserve community fields. Scrape accepts all native formats,
 actions, proxy modes, cache/index controls, lockdown, PII options and arbitrary
@@ -49,15 +49,22 @@ unavailable cloud Alexandria catalogue. It does not manufacture provider data.
 For example:
 
 ```json
-{"name":"firecrawl_find_tools","arguments":{"query":"batch scrape","detail":"full"}}
+{
+  "name": "firecrawl_find_tools",
+  "arguments": { "query": "batch scrape", "detail": "full" }
+}
 ```
 
 ```json
 {
-  "name":"firecrawl_api",
-  "arguments":{
-    "operation":"POST /v2/batch/scrape",
-    "body":{"urls":["https://example.org"],"formats":["markdown"],"maxAge":0}
+  "name": "firecrawl_api",
+  "arguments": {
+    "operation": "POST /v2/batch/scrape",
+    "body": {
+      "urls": ["https://example.org"],
+      "formats": ["markdown"],
+      "maxAge": 0
+    }
   }
 }
 ```
@@ -67,10 +74,19 @@ For example:
 integration routes. It is restricted to catalogue operations at the configured
 API origin, rejects redirects and traversal, and forwards the caller's key.
 It does not expose operator-secret routes or internal/public callbacks.
-Document upload is available through the existing hosted parse upload flow or
-the native upload-reference endpoints; the raw upload operation accepts
-`fileBase64` and `contentType`. The MCP request limit is 8 MiB; larger uploads
-must use the returned upload URL from the client machine.
+`firecrawl_parse` accepts `fileBase64`, `filename`, optional `contentType`,
+formats and native parse options. It sends a multipart upload to the API and
+works without cloud upload-reference storage. The general `firecrawl_api` tool
+supports the same fields for `POST /v2/parse`. Inline files are limited to 6 MiB
+decoded and MCP requests to 8 MiB. For larger files, send multipart/form-data
+directly from the client machine to the API's `POST /v2/parse`.
+The upstream filePath/uploadRef flow remains available when its API storage is
+configured; it currently reports a missing upload-reference configuration on
+this deployment. A hosted server cannot read a path on the client machine.
+
+Browser listing works on release 4, but session creation currently reports
+`HANGAR_URL is missing` despite the older community browser service running.
+The MCP tools preserve that API error. This is an API/backend integration gap.
 
 The registry includes deployment-unavailable endpoints for diagnostics only
 (`includeUnavailable: true`). Research/developer/government indexes, Labs,
